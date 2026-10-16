@@ -70,6 +70,10 @@ web_modules/
 .env.*
 !.env.example
 
+# Open Payments private key — nunca debe subirse al repo
+private.key
+*.pem
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
