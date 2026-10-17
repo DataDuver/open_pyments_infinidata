@@ -1,18 +1,12 @@
-import Inicio from "./pages/Inicio.jsx";
-import Pagar from "./pages/Pagar.jsx";
-import Admin from "./pages/Admin.jsx";
+import Admin from './paginas/Admin.jsx'
+import Inicio from './paginas/Inicio.jsx'
+import Pagar from './paginas/Pagar.jsx'
 
+// Tres pantallas: no hace falta un router
 export default function App() {
-  const { pathname } = window.location;
-
-  const coincidePagar = pathname.match(/^\/pagar\/([^/]+)\/?$/);
-  if (coincidePagar) {
-    return <Pagar token={coincidePagar[1]} />;
-  }
-
-  if (pathname.startsWith("/admin")) {
-    return <Admin />;
-  }
-
-  return <Inicio />;
+  const ruta = window.location.pathname
+  const pago = ruta.match(/^\/pagar\/([\w-]+)/)
+  if (pago) return <Pagar token={pago[1]} />
+  if (ruta.startsWith('/admin')) return <Admin />
+  return <Inicio />
 }

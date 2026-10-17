@@ -1,68 +1,39 @@
 export async function api(ruta, opciones = {}) {
-  const res = await fetch(`/api${ruta}`, {
-    headers: { "Content-Type": "application/json" },
+  const respuesta = await fetch(`/api${ruta}`, {
+    headers: { 'Content-Type': 'application/json' },
     ...opciones,
-  });
-
-  let cuerpo = null;
-  try {
-    cuerpo = await res.json();
-  } catch {
-    // respuesta sin cuerpo (p.ej. 204)
-  }
-
-  if (!res.ok) {
-    throw new Error(cuerpo?.error || "No pudimos conectar con el servidor");
-  }
-  return cuerpo;
+  })
+  const datos = await respuesta.json().catch(() => ({}))
+  if (!respuesta.ok) throw new Error(datos.error || 'Algo salió mal, intenta de nuevo')
+  return datos
 }
 
-const formateadoresDinero = new Map();
+export const dinero = (valor, moneda = 'USD', escala = 2) =>
+  (Number(valor) / 10 ** Number(escala)).toLocaleString('es-CO', {
+    style: 'currency',
+    currency: moneda,
+  })
 
-export function dinero(valor, moneda = "USD", escala = 2) {
-  if (!formateadoresDinero.has(moneda)) {
-    formateadoresDinero.set(
-      moneda,
-      new Intl.NumberFormat("es-CO", { style: "currency", currency: moneda })
-    );
-  }
-  return formateadoresDinero.get(moneda).format(Number(valor) / 10 ** escala);
-}
-
-function capitalizar(texto) {
-  return texto.charAt(0).toUpperCase() + texto.slice(1);
-}
-
-// periodo/vence son columnas DATE: se formatean en UTC para que el día no
-// cambie según la zona horaria del navegador.
+/** '2026-10-01' → 'Octubre de 2026' */
 export function mes(periodo) {
-  const formato = new Intl.DateTimeFormat("es-CO", {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-  return capitalizar(formato.format(new Date(periodo)));
+  const texto = new Date(`${periodo}T00:00:00Z`).toLocaleDateString('es-CO', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+  return texto[0].toUpperCase() + texto.slice(1)
 }
 
-export function fecha(valor) {
-  const formato = new Intl.DateTimeFormat("es-CO", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-  return formato.format(new Date(valor));
-}
+export const fecha = (dia) =>
+  new Date(`${dia}T00:00:00Z`).toLocaleDateString('es-CO', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
 
-export function fechaHora(valor) {
-  const formato = new Intl.DateTimeFormat("es-CO", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-  return formato.format(new Date(valor));
-}
+export const fechaHora = (iso) =>
+  new Date(iso).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })
 
-export function puntero(walletUrl) {
-  if (!walletUrl) return "";
-  return walletUrl.replace(/^https?:\/\//, "$");
-}
+/** 'https://ilp.interledger-test.dev/ana' → '$ilp.interledger-test.dev/ana' */
+export const puntero = (url) => (url ? url.replace(/^https:\/\//, '$') : '')
