@@ -1,3 +1,11 @@
+# ENLACES
+aplicacion WEB al dia que usa Open Payments - Interledger
+https://aldia-diego-hvajbtdvajgme7e8.canadacentral-01.azurewebsites.net/
+
+viedo en You Tube de la demo - Al Día - InfiniData
+https://youtu.be/P8y3zgeEkEg
+
+
 # Despliegue en Azure
 
 Todo se hace desde el **Portal de Azure**: no hace falta Docker ni la CLI `az`.
